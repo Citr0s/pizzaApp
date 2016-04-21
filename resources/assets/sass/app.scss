@@ -1,2 +1,14 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+.pizza{
+	.panel{
+		.panel-body{
+			height:218px;
+		}
+	}
+	a{
+		&:hover{
+			text-decoration:none;
+		}
+	}
+}

@@ -16,5 +16,11 @@ Route::get('/', function () {
 });
 
 Route::auth();
-
+Route::get('/order', 'OrderController@index');
+Route::get('/order/pizza/add/{id}/{size}', 'OrderController@savePizza');
 Route::get('/home', 'HomeController@index');
+
+/** debug **/
+Route::get('/reset', function(){
+  Session::forget('order');
+});
