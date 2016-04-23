@@ -7,70 +7,63 @@ use Session;
 
 class Order extends Model
 {
+    private $pizzas;
+    private $deliveryType;
+    private $complete;
+    private $total;
+
     public function __construct(){
-      $order = new \stdClass;
-      $order->pizzas = [];
-      $order->total = 0;
-      $this->saveToSession($order);
+      $this->pizzas = [];
+      $this->complete = false;
+      $this->total = 0;
+      $this->updateSession();
     }
 
-    public static function addPizza($pizza, $size){
-      $order = Session::get('order');
-      $tempPizza = new \stdClass;
-      $tempPizza->name = $pizza->name;
-      $tempPizza->size = $size;
-      $tempPizza->complete = false;
-      $tempPizza->toppings = [];
-
-      foreach($pizza->types as $type){
-        if($type->size->name == $size){
-          $tempPizza->price = $type->price;
-        }
-      }
-
-      $order->total += $tempPizza->price;
-      array_push($order->pizzas, $tempPizza);
+    public function addPizza(Pizza $pizza, Size $size, $price){
+      $savablePizzaArray = [
+        'pizza' => $pizza,
+        'size' => $size,
+        'price' => $price,
+        'complete' => false
+      ];
+      array_push($this->pizzas, $savablePizzaArray);
+      $this->updateSession();
     }
 
-    public static function addTopping($topping, $size){
-      $order = Session::get('order');
-      $tempTopping = new \stdClass;
-      $tempTopping->name = $topping->name;
-
-      foreach($topping->types as $type){
-        if($type->size->name == $size){
-          $tempTopping->price = $type->price;
-        }
-      }
-
-      foreach($order->pizzas as $savedPizza){
-        if(!$savedPizza->complete){
-          $pizza = $savedPizza;
-        }
-      }
-      $pizza->complete
-      $order->total += $tempTopping->price;
-      array_push($pizza->toppings, $tempTopping);
+    public function getPizzas(){
+      return $this->pizzas;
     }
 
-    public static function getPizzas(){
-      $order = Session::get('order');
-      return $order->pizzas;
+    public function addTopping(Pizza $pizza, Topping $topping){
+      foreach($this->pizzas as $savedPizza){
+        if($pizza == $savedPizza){
+          array_push($savedPizza, $topping);
+        }
+      }
+      $this->updateSession();
+    }
+
+    public function setDeliveryType($type){
+      $this->deliveryType = $type;
+    }
+
+    public function sendToKitchen(){
+      $this->complete = true;
+    }
+
+    public function setTotal($value){
+      $this->total += $value;
     }
 
     public function getTotal(){
-      $order = Session::get('order');
-      return $this->getPriceInPounds($order->total);
+      return self::getPriceInPounds($this->total);
     }
 
-    public function saveToSession($order){
-      if(!Session::has('order')){
-        Session::set('order', $order);
-      }
-      Session::save();
+    public function updateSession(){
+      Session::set('order', $this);
     }
 
-    public function getPriceInPounds($price){
+    public static function getPriceInPounds($price){
       return number_format($price / 100, 2);
     }
 }

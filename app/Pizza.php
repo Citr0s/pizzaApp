@@ -13,12 +13,13 @@ class Pizza extends Model
     }
     return implode(', ', $toppings);
   }
+  
   public function toppings(){
     return $this->belongsToMany('App\Topping', 'pizza_toppings');
   }
 
-  public function types(){
-    return $this->hasMany('App\PizzaPrice');
+  public function sizes(){
+    return $this->belongsToMany('App\Size', 'pizza_prices')->withPivot('price');
   }
 
   public static function getPriceInPounds($price){

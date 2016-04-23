@@ -5,7 +5,7 @@
         <h1>
         	Order <small>Select Pizza</small>
         	<span class="pull-right">
-        		<small>Running Total</small> £{{ $total }}
+        		<small>Running Total</small> £{{ $order->getTotal() }}
         	</span>
         </h1>
     </div>
@@ -30,11 +30,11 @@
 								{{ $pizza->getToppings() }}
 							</p>
 							<table class="table">
-                  @foreach($pizza->types as $type)
+                  @foreach($pizza->sizes as $size)
                     <tr>
-    									<td>{{ ucfirst($type->size->name) }}</td>
-    									<td>£{{ $pizza->getPriceInPounds($type->price) }}</td>
-    									<td><a href="/order/pizza/add/{{ $pizza->id }}/{{ $type->size->name }}"><span class="label label-primary">Select</span></a></td>
+    									<td>{{ ucfirst($size->name) }}</td>
+    									<td>£{{ $pizza->getPriceInPounds($size->pivot->price) }}</td>
+    									<td><a href="/order/pizza/add/{{ $pizza->id }}/{{ $size->id }}"><span class="label label-primary">Select</span></a></td>
     								</tr>
                   @endforeach
 							</table>
@@ -48,11 +48,11 @@
 					<div class="panel-heading">Order Overview</div>
 					<div class="panel-body">
 						<table class="table">
-						@foreach($order->getPizzas() as $pizza)
+						@foreach($order->getPizzas() as $pizzaInfo)
 							<tr>
-								<td>{{ $pizza->name }}</td>
-								<td>{{ $pizza->size }}</td>
-								<td>£{{ number_format($pizza->price / 100, 2) }}</td>
+								<td>{{ $pizzaInfo['pizza']->name }}</td>
+								<td>{{ $pizzaInfo['size']->name }}</td>
+								<td>£{{ $order::getPriceInPounds($pizzaInfo['price']) }}</td>
 							</tr>
 						@endforeach
 						</table>

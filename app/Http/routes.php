@@ -28,3 +28,6 @@ Route::get('/home', 'HomeController@index');
 Route::get('/reset', function(){
   Session::forget('order');
 });
+Route::get('/test', function(){
+  dd(App\Pizza::find(1));
+});

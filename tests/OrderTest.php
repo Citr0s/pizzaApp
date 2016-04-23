@@ -4,39 +4,38 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Pizza;
+use App\Size;
 use App\Order;
-use Session;
 
 class OrderTest extends TestCase
 {
+    private $order;
+
+    public function setUp(){
+      parent::setUp();
+
+      $this->order = new Order();
+    }
     public function test_if_session_is_being_set_when_creating_new_order(){
-        $order = new Order();
         $this->assertTrue(Session::has('order'));
     }
 
     public function test_if_total_is_being_set_when_creating_new_order(){
-        $order = new Order();
-        $this->assertEquals(0, $order->getTotal());
+        $this->assertEquals(0, $this->order->getTotal());
     }
 
     public function test_adding_pizza_to_order(){
-        $pizza = new \stdClass;
-        $pizza->name = 'Test Pizza';
-        $pizza->size = 'large';
-        $pizza->types = new \stdClass;
-        $pizza->types->type = new \stdClass;
-        $pizza->types->type->size = new \stdClass;
-        $pizza->types->type->size->name = 'large';
-        $pizza->types->type->price = 1000;
+        $pizza = Pizza::find(1);
+        $size = Size::find(1);
+        $price = 800;
 
-        $order = new Order();
-        $order->addPizza($pizza, 'large');
+        $this->order->addPizza($pizza, $size, $price);
 
-        $this->assertEquals('Test Pizza', $order->getPizzas()[0]->name);
+        $this->assertEquals('Original Pizza', $this->order->getPizzas()[0]['pizza']->name);
     }
 
     public function test_getting_price_formatted_in_pounds(){
-      $actual = Pizza::getPriceInPounds(1000);
+      $actual = Order::getPriceInPounds(1000);
 
       $this->assertEquals(10, $actual);
     }
