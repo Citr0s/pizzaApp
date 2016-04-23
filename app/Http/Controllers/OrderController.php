@@ -34,7 +34,6 @@ class OrderController extends Controller
         }
       }
 
-      $order->updateSession();
     	return redirect()->back();
     }
 
@@ -42,34 +41,43 @@ class OrderController extends Controller
       $order = Session::get('order');
     	$toppings = Topping::all();
 
-      foreach($order->getPizzas() as $savedPizza){
-        if(!$savedPizza['complete']){
-          $pizza = $savedPizza;
+      for($i = 0; $i < count($order->getPizzas()); $i++){
+        if(!$order->getPizzas()[$i]['complete']){
+          $pizza = $order->getPizzas()[$i];
+          break;
         }
       }
 
     	return view('order.toppings', compact('toppings', 'pizza', 'order'));
     }
 
-    public function delivery(){
+    public function saveTopping($id, $size){
+      $topping = Topping::find($id);
+      $size = Size::find($size);
       $order = Session::get('order');
 
-      foreach($order->pizzas as $savedPizza){
-        if(!$savedPizza->complete){
-          $savedPizza->complete = true;
-          Order::saveToSession($order);
-          return redirect('/order/topping');
+      foreach($topping->sizes as $toppingSize){
+        if($toppingSize->name == $size->name){
+          $order->addTopping($topping, $size, $toppingSize->pivot->price);
+          $order->setTotal($toppingSize->pivot->price);
         }
       }
 
-      $total = $order->total;
-    	return view('order.delivery', compact('total', 'order'));
+    	return redirect()->back();
     }
 
-    public function saveTopping($id, $size){
-      $topping = Topping::find($id);
-      Order::addTopping($topping, $size);
+    public function delivery(){
+      $order = Session::get('order');
 
-    	return redirect()->back();
+      foreach($order->getPizzas() as $savedPizza){
+        if(!$savedPizza['complete']){
+          $order->completePizza($savedPizza);
+          $order->updateSession();
+
+          return redirect()->back();
+        }
+      }
+
+    	return view('order.delivery', compact('order'));
     }
 }

@@ -24,9 +24,27 @@ class Order extends Model
         'pizza' => $pizza,
         'size' => $size,
         'price' => $price,
-        'complete' => false
+        'complete' => false,
+        'toppings' => []
       ];
       array_push($this->pizzas, $savablePizzaArray);
+      $this->updateSession();
+    }
+
+    public function addTopping(Topping $topping, Size $size, $price){
+      $savableToppingArray = [
+        'topping' => $topping,
+        'size' => $size,
+        'price' => $price
+      ];
+
+      for($i = 0; $i < count($this->pizzas); $i++){
+        if(!$this->pizzas[$i]['complete']){
+          array_push($this->pizzas[$i]['toppings'], $savableToppingArray);
+          break;
+        }
+      }
+
       $this->updateSession();
     }
 
@@ -34,13 +52,25 @@ class Order extends Model
       return $this->pizzas;
     }
 
-    public function addTopping(Pizza $pizza, Topping $topping){
-      foreach($this->pizzas as $savedPizza){
-        if($pizza == $savedPizza){
-          array_push($savedPizza, $topping);
+    public function getToppings($pizzaToppings){
+      $toppings = [];
+
+      foreach($pizzaToppings as $topping){
+        array_push($toppings, $topping['topping']);
+      }
+
+      return $toppings;
+    }
+
+    public function completePizza($pizza){
+      for($i = 0; $i < count($this->pizzas); $i++){
+        if(!$this->pizzas[$i]['complete']){
+          if($this->pizzas[$i] === $pizza){
+            $this->pizzas[$i]['complete'] = true;
+            break;
+          }
         }
       }
-      $this->updateSession();
     }
 
     public function setDeliveryType($type){

@@ -5,7 +5,7 @@
         <h1>
         	Order <small>Select Toppings</small>
         	<span class="pull-right">
-        		<small>Running Total</small> £{{ number_format($total / 100, 2) }}
+        		<small>Running Total</small> £{{ $order->getTotal() }}
         	</span>
         </h1>
     </div>
@@ -27,11 +27,19 @@
     					<div class="panel-body">
     						{{ $topping->name }}
     						<span class="pull-right">
-                  @foreach($topping->types as $type)
-                    @if($type->size->name == $pizza->size)
-                      £{{ $topping->getPriceInPounds($type->price) }}
-                      @if(!in_array($topping->name, $pizza->toppings) || $pizza->name == 'Create Your Own')
-		                   <a href="/order/topping/add/{{ $topping->id }}/{{ $type->size->name }}"><span class="label label-primary">Select</span></a>
+                  @foreach($topping->sizes as $size)
+                    <?php
+                      $isInArray = false;
+                      foreach($pizza['toppings'] as $currentTopping){
+                        if($currentTopping['topping']->name === $topping->name){
+                          $isInArray = true;
+                        }
+                      }
+                    ?>
+                    @if($size->name == $pizza['size']->name)
+                      £{{ $topping->getPriceInPounds($size->pivot->price) }}
+                      @if(!$isInArray || $pizza['pizza']->name == 'Create Your Own')
+		                   <a href="/order/topping/add/{{ $topping->id }}/{{ $size->id }}"><span class="label label-primary">Select</span></a>
                       @endif
                     @endif
                   @endforeach
@@ -46,22 +54,22 @@
           <div class="panel-heading">Order Overview</div>
             <div class="panel-body">
               <table class="table">
-                @foreach($order->pizzas as $orderPizza)
-    							<tr @if($orderPizza->name == $pizza->name) style="background-color:#2cc36b;" @endif>
-    								<td>{{ $orderPizza->name }}</td>
-    								<td>{{ $orderPizza->size }}</td>
-    								<td>£{{ number_format($pizza->price / 100, 2) }}</td>
+                @foreach($order->getPizzas() as $pizzaInfo)
+    							<tr @if($pizzaInfo['pizza'] === $pizza['pizza']) style="background-color:#2cc36b;" @endif>
+    								<td>{{ $pizzaInfo['pizza']->name }}</td>
+    								<td>{{ $pizzaInfo['size']->name }}</td>
+    								<td>£{{ $order::getPriceInPounds($pizzaInfo['price']) }}</td>
     							</tr>
-                  @if(count($orderPizza->toppings) > 0)
+                  @if(count($pizzaInfo['toppings']) > 0)
                     <tr>
                       <td>
                         Toppings:
                       </td>
                       <td>
                           <?php $totalToppingPrice = 0;?>
-                          @foreach($orderPizza->toppings as $topping)
-                              {{ $topping->name }}<br />
-                              <?php $totalToppingPrice += $topping->price ?>
+                          @foreach($pizzaInfo['toppings'] as $topping)
+                              {{ $topping['topping']->name }}<br />
+                              <?php $totalToppingPrice += $topping['price'] ?>
                           @endforeach
                       </td>
                       <td>
