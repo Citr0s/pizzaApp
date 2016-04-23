@@ -16,6 +16,7 @@ class CreateOrdersTable extends Migration
             $table->increments('id')->unique();
             $table->integer('user_id');
             $table->longText('data');
+            $table->text('delivery');
             $table->boolean('complete');
         });
     }

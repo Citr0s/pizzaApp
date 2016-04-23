@@ -16,8 +16,12 @@ Route::get('/', function () {
 });
 
 Route::auth();
-Route::get('/order', 'OrderController@index');
+Route::get('/order', 'OrderController@pizza');
+Route::get('/order/pizza', 'OrderController@pizza');
 Route::get('/order/pizza/add/{id}/{size}', 'OrderController@savePizza');
+Route::get('/order/topping', 'OrderController@topping');
+Route::get('/order/topping/add/{id}/{size}', 'OrderController@saveTopping');
+Route::get('/order/delivery', 'OrderController@delivery');
 Route::get('/home', 'HomeController@index');
 
 /** debug **/

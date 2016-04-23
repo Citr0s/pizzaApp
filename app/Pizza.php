@@ -18,7 +18,7 @@ class Pizza extends Model
   }
 
   public function types(){
-    return $this->hasMany('App\Price');
+    return $this->hasMany('App\PizzaPrice');
   }
 
   public static function getPriceInPounds($price){

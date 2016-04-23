@@ -4,7 +4,7 @@
         <h1>
         	Order <small>Select Delivery</small>
         	<span class="pull-right">
-        		<small>Running Total</small> £{{ $subTotal }}
+        		<small>Running Total</small> £{{ $total }}
         	</span>
         </h1>
     </div>

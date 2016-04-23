@@ -15,7 +15,7 @@
 	    			<a href="/"><button type="button" class="btn btn-default">Home</button></a>
 	    		</span>
 	    		<span class="pull-right">
-	    			<a href="/order/ingredient"><button type="button" class="btn btn-default">Next</button></a>
+	    			<a href="/order/topping"><button type="button" class="btn btn-default">Next</button></a>
 	    		</span>
     		</div>
     	</div>

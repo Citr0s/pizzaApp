@@ -19,6 +19,8 @@ class Order extends Model
       $tempPizza = new \stdClass;
       $tempPizza->name = $pizza->name;
       $tempPizza->size = $size;
+      $tempPizza->complete = false;
+      $tempPizza->toppings = [];
 
       foreach($pizza->types as $type){
         if($type->size->name == $size){
@@ -28,6 +30,27 @@ class Order extends Model
 
       $order->total += $tempPizza->price;
       array_push($order->pizzas, $tempPizza);
+    }
+
+    public static function addTopping($topping, $size){
+      $order = Session::get('order');
+      $tempTopping = new \stdClass;
+      $tempTopping->name = $topping->name;
+
+      foreach($topping->types as $type){
+        if($type->size->name == $size){
+          $tempTopping->price = $type->price;
+        }
+      }
+
+      foreach($order->pizzas as $savedPizza){
+        if(!$savedPizza->complete){
+          $pizza = $savedPizza;
+        }
+      }
+      $pizza->complete
+      $order->total += $tempTopping->price;
+      array_push($pizza->toppings, $tempTopping);
     }
 
     public static function getPizzas(){
