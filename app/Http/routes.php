@@ -19,17 +19,12 @@ Route::get('/order/pizza/add/{id}/{size}', 'OrderController@savePizza');
 Route::get('/order/topping', 'OrderController@topping');
 Route::get('/order/topping/add/{id}/{size}', 'OrderController@saveTopping');
 Route::get('/order/delivery', 'OrderController@delivery');
-Route::get('/home', 'HomeController@index');
 Route::post('/order/delivery/save', 'OrderController@saveDelivery');
 Route::get('/order/confirm', 'ConfirmationController@index');
 Route::post('/order/confirm', 'ConfirmationController@confirm');
 
-/** debug **/
-Route::get('/reset', function(){
-  Session::forget('order');
-});
-Route::get('/test', function(){
-  dd(App\Pizza::find(1));
+Route::get('/home', function(){
+  return redirect('/');
 });
 Route::get('/{page}', function(){
   return redirect('/');
