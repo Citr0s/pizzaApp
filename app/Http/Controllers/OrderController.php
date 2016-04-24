@@ -35,6 +35,10 @@ class OrderController extends Controller
     }
 
     public function savePizza($id, $size){
+      if(!is_int($id) || !is_int($size)){
+        return redirect('/');
+      }
+
       $pizza = Pizza::find($id);
       $size = Size::find($size);
       $order = Session::get('order');
@@ -57,8 +61,6 @@ class OrderController extends Controller
         return redirect('/order/pizza');
       }
 
-      // dd($order->getPizzas());
-
       for($i = 0; $i < count($order->getPizzas()); $i++){
         $pizza = $order->getPizzas()[$i];
         if(!$order->getPizzas()[$i]['complete']){
@@ -76,6 +78,10 @@ class OrderController extends Controller
     }
 
     public function saveTopping($id, $size){
+      if(!is_int($id) || !is_int($size)){
+        return redirect('/');
+      }
+
       $topping = Topping::find($id);
       $size = Size::find($size);
       $order = Session::get('order');
@@ -118,8 +124,6 @@ class OrderController extends Controller
 
       $order->setComplete();
       $order->updateSession();
-
-      // dd($order);
 
     	return view('order.delivery', compact('order'));
     }
