@@ -44,20 +44,7 @@
 			@endforeach
 			</div>
 			<div class="col-md-4">
-				<div class="panel panel-default">
-					<div class="panel-heading">Order Overview</div>
-					<div class="panel-body">
-						<table class="table">
-						@foreach($order->getPizzas() as $pizzaInfo)
-							<tr>
-								<td>{{ $pizzaInfo['pizza']->name }}</td>
-								<td>{{ $pizzaInfo['size']->name }}</td>
-								<td>£{{ $order::getPriceInPounds($pizzaInfo['price']) }}</td>
-							</tr>
-						@endforeach
-						</table>
-					</div>
-				</div>
+				@include('partials.overview')
 			</div>
 		</div>
 @endsection

@@ -50,37 +50,7 @@
   		  @endforeach
       </div>
       <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">Order Overview</div>
-            <div class="panel-body">
-              <table class="table">
-                @foreach($order->getPizzas() as $pizzaInfo)
-    							<tr @if($pizzaInfo['pizza'] === $pizza['pizza']) style="background-color:#2cc36b;" @endif>
-    								<td>{{ $pizzaInfo['pizza']->name }}</td>
-    								<td>{{ $pizzaInfo['size']->name }}</td>
-    								<td>£{{ $order::getPriceInPounds($pizzaInfo['price']) }}</td>
-    							</tr>
-                  @if(count($pizzaInfo['toppings']) > 0)
-                    <tr>
-                      <td>
-                        Toppings:
-                      </td>
-                      <td>
-                          <?php $totalToppingPrice = 0;?>
-                          @foreach($pizzaInfo['toppings'] as $topping)
-                              {{ $topping['topping']->name }}<br />
-                              <?php $totalToppingPrice += $topping['price'] ?>
-                          @endforeach
-                      </td>
-                      <td>
-                        £{{ number_format($totalToppingPrice / 100, 2) }}
-                      </td>
-                    </tr>
-                  @endif
-    						@endforeach
-              </table>
-            </div>
-          </div>
+        @include('partials.overview')
       </div>
 		</div>
 @endsection
