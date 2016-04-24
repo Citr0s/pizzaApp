@@ -12,13 +12,11 @@ class Basket extends Model
     private $complete;
     private $total;
 
-    public function __construct($model = false){
-      if(!$model){
-        $this->pizzas = [];
-        $this->complete = false;
-        $this->total = 0;
-        $this->updateSession();
-      }
+    public function __construct(){
+      $this->pizzas = [];
+      $this->complete = false;
+      $this->total = 0;
+      $this->updateSession();
     }
 
     public function addPizza(Pizza $pizza, Size $size, $price){
@@ -81,16 +79,12 @@ class Basket extends Model
       }
     }
 
-    public function getDeliveryType(){
-      return $this->deliveryType;
-    }
-
     public function setDeliveryType($type){
       $this->deliveryType = $type;
     }
 
-    public function sendToKitchen(){
-      $this->complete = true;
+    public function getDeliveryType(){
+      return $this->deliveryType;
     }
 
     public function setTotal($value){

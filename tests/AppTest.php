@@ -10,4 +10,9 @@ class AppTest extends TestCase
     {
         $this->visit('/')->see('Welcome');
     }
+
+    public function test_starting_new_order()
+    {
+        $this->visit('/order')->see('Order');
+    }
 }

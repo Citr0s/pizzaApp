@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Pizza;
+use App\Topping;
 use App\Size;
 use App\Basket;
 
@@ -34,9 +35,78 @@ class BasketTest extends TestCase
       $this->assertEquals('Original Pizza', $this->order->getPizzas()[0]['pizza']->name);
   }
 
+  public function test_adding_topping_to_pizza(){
+      $pizza = Pizza::find(1);
+      $size = Size::find(1);
+      $price = 800;
+      $this->order->addPizza($pizza, $size, $price);
+
+      $topping = Topping::find(1);
+      $size = Size::find(1);
+      $price = 100;
+      $this->order->addTopping($topping, $size, $price);
+
+      $this->assertEquals('Cheese', $this->order->getPizzas()[0]['toppings'][0]['topping']->name);
+  }
+
+  public function test_marking_pizza_as_complete(){
+      $pizza = Pizza::find(1);
+      $size = Size::find(1);
+      $price = 800;
+      $this->order->addPizza($pizza, $size, $price);
+
+      $pizza = [
+        'pizza' => $pizza,
+        'size' => $size,
+        'price' => $price,
+        'complete' => false,
+        'toppings' => []
+      ];
+
+      $this->order->completePizza($pizza);
+
+      $this->assertTrue($this->order->getPizzas()[0]['complete']);
+  }
+
+  public function test_setting_delivery_type(){
+    $this->order->setDeliveryType('collection');
+
+    $this->assertEquals('collection', $this->order->getDeliveryType());
+  }
+
+  public function test_completing_an_order(){
+    $this->order->setComplete();
+
+    $this->assertTrue($this->order->getComplete());
+  }
+
+  public function test_setting_total_of_order(){
+    $this->order->setTotal(1000);
+
+    $this->assertEquals('10', $this->order->getTotal());
+  }
+
   public function test_getting_price_formatted_in_pounds(){
     $actual = Basket::getPriceInPounds(1000);
 
     $this->assertEquals(10, $actual);
+  }
+
+  public function test_generating_json(){
+    $pizza = Pizza::find(1);
+    $size = Size::find(1);
+    $price = 800;
+    $this->order->addPizza($pizza, $size, $price);
+
+    $topping = Topping::find(1);
+    $size = Size::find(1);
+    $price = 100;
+    $this->order->addTopping($topping, $size, $price);
+
+    $this->order->setDeliveryType('delivery');
+    $actual = $this->order->getJson();
+    $expected = '{"pizzas":{"0":{"pizza":{"id":1,"name":"Original Pizza"},"size":{"id":1,"name":"small"},"price":800,"complete":false,"toppings":{"0":{"topping":{"id":1,"name":"Cheese"},"size":{"id":1,"name":"small"},"price":100}}}},"deliveryType":"delivery","complete":false,"total":0}';
+
+    $this->assertEquals($expected, $actual);
   }
 }

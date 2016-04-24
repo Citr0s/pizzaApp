@@ -13,7 +13,7 @@ class Pizza extends Model
     }
     return implode(', ', $toppings);
   }
-  
+
   public function toppings(){
     return $this->belongsToMany('App\Topping', 'pizza_toppings');
   }
