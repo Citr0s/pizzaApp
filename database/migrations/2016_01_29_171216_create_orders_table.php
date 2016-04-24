@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->longText('data');
             $table->text('delivery');
             $table->boolean('complete');
+            $table->timestamps();
         });
     }
 

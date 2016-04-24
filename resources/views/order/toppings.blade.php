@@ -74,7 +74,7 @@
                       </td>
                       <td>
                         £{{ number_format($totalToppingPrice / 100, 2) }}
-                      <td>
+                      </td>
                     </tr>
                   @endif
     						@endforeach

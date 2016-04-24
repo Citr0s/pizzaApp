@@ -4,16 +4,10 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class OrderTest extends TestCase
+class AppTest extends TestCase
 {
-  /**
-   * A basic test example.
-   *
-   * @return void
-   */
-  public function testExample()
-  {
-      $this->assertTrue(true);
-  }
-
+    public function test_loading_the_app()
+    {
+        $this->visit('/')->see('Welcome');
+    }
 }

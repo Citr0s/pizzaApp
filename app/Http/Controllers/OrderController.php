@@ -5,16 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Order;
+use App\Basket;
 use App\Topping;
 use App\Size;
 use App\Pizza;
 use Session;
+use Auth;
 
 class OrderController extends Controller
 {
+    public function index(){
+        $order = Order::where('user_id', '=', Auth::id())->where('complete', '=', false)->first();
+
+        if(!is_null($order)){
+            $order = json_decode($order->data);
+        }
+
+        return view('welcome', compact('order'));
+    }
+
     public function pizza(){
       if(!Session::has('order')){
-        new Order();
+        new Basket();
       }
       $order = Session::get('order');
   	  $pizzas = Pizza::all();
@@ -41,12 +53,24 @@ class OrderController extends Controller
       $order = Session::get('order');
     	$toppings = Topping::all();
 
+      if(is_null($order)){
+        return redirect('/order/pizza');
+      }
+
+      // dd($order->getPizzas());
+
       for($i = 0; $i < count($order->getPizzas()); $i++){
+        $pizza = $order->getPizzas()[$i];
         if(!$order->getPizzas()[$i]['complete']){
           $pizza = $order->getPizzas()[$i];
           break;
         }
       }
+
+      if(!isset($pizza)){
+        return redirect()->back();
+      }
+
 
     	return view('order.toppings', compact('toppings', 'pizza', 'order'));
     }
@@ -68,16 +92,43 @@ class OrderController extends Controller
 
     public function delivery(){
       $order = Session::get('order');
+      $morePizzas = false;
+
+      if(is_null($order)){
+        return redirect('/order/topping');
+      }
 
       foreach($order->getPizzas() as $savedPizza){
         if(!$savedPizza['complete']){
           $order->completePizza($savedPizza);
           $order->updateSession();
-
-          return redirect()->back();
+          break;
         }
       }
 
+      foreach($order->getPizzas() as $savedPizza){
+        if(!$savedPizza['complete']){
+          $morePizzas = true;
+        }
+      }
+
+      if($morePizzas){
+        return redirect()->back();
+      }
+
+      $order->setComplete();
+      $order->updateSession();
+
+      // dd($order);
+
     	return view('order.delivery', compact('order'));
+    }
+
+    public function saveDelivery(Request $type){
+        $order = Session::get('order');
+        $order->setDeliveryType($type->delivery);
+        $order->updateSession();
+
+        return redirect('/order/confirm');
     }
 }
