@@ -35,7 +35,7 @@ class OrderController extends Controller
     }
 
     public function savePizza($id, $size){
-      if(!is_int($id) || !is_int($size)){
+      if(!is_numeric($id) || !is_numeric($size)){
         return redirect('/');
       }
 
@@ -78,7 +78,7 @@ class OrderController extends Controller
     }
 
     public function saveTopping($id, $size){
-      if(!is_int($id) || !is_int($size)){
+      if(!is_numeric($id) || !is_numeric($size)){
         return redirect('/');
       }
 
