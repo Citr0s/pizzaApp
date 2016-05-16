@@ -39,8 +39,8 @@ class OrderController extends Controller
         return redirect('/');
       }
 
-      $pizza = Pizza::find($id);
-      $size = Size::find($size);
+      $pizza = Pizza::findOrFail($id);
+      $size = Size::findOrFail($size);
       $order = Session::get('order');
 
       foreach($pizza->sizes as $pizzaSize){
@@ -82,8 +82,8 @@ class OrderController extends Controller
         return redirect('/');
       }
 
-      $topping = Topping::find($id);
-      $size = Size::find($size);
+      $topping = Topping::findOrFail($id);
+      $size = Size::findOrFail($size);
       $order = Session::get('order');
 
       foreach($topping->sizes as $toppingSize){

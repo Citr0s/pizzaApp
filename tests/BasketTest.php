@@ -7,6 +7,7 @@ use App\Pizza;
 use App\Topping;
 use App\Size;
 use App\Basket;
+use App\Http\Controllers\OrderController;
 
 class BasketTest extends TestCase
 {
@@ -14,9 +15,9 @@ class BasketTest extends TestCase
 
   public function setUp(){
     parent::setUp();
-
     $this->order = new Basket();
   }
+
   public function test_if_session_is_being_set_when_creating_new_order(){
       $this->assertTrue(Session::has('order'));
   }
@@ -105,8 +106,44 @@ class BasketTest extends TestCase
 
     $this->order->setDeliveryType('delivery');
     $actual = $this->order->getJson();
-    $expected = '{"pizzas":{"0":{"pizza":{"id":1,"name":"Original Pizza"},"size":{"id":1,"name":"small"},"price":800,"complete":false,"toppings":{"0":{"topping":{"id":1,"name":"Cheese"},"size":{"id":1,"name":"small"},"price":100}}}},"deliveryType":"delivery","complete":false,"total":0}';
+    $expected = '{"pizzas":[{"pizza":{"id":1,"name":"Original Pizza"},"size":{"id":1,"name":"small"},"price":800,"complete":false,"toppings":[{"topping":{"id":1,"name":"Cheese"},"size":{"id":1,"name":"small"},"price":100}]}],"deliveryType":"delivery","complete":false,"total":0}';
 
     $this->assertEquals($expected, $actual);
+  }
+
+  public function test_trying_to_save_bad_pizza(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->savePizza(9999, 1);
+  }
+
+  public function test_trying_to_save_bad_size_size(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->savePizza(1, 9999);
+  }
+
+  public function test_trying_to_save_bad_pizza_and_size(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->savePizza(9999, 9999);
+  }
+
+  public function test_trying_to_save_bad_topping(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->saveTopping(9999, 1);
+  }
+
+  public function test_trying_to_save_bad_topping_size(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->saveTopping(1, 9999);
+  }
+
+  public function test_trying_to_save_bad_topping_and_size(){
+    $this->setExpectedException('Exception');
+    $orderController = new OrderController();
+    $orderController->saveTopping(9999, 9999);
   }
 }

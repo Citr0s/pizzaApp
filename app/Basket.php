@@ -118,6 +118,6 @@ class Basket extends Model
       $saveableObject->complete = $this->complete;
       $saveableObject->total = $this->total;
 
-      return json_encode($saveableObject, JSON_FORCE_OBJECT);
+      return json_encode($saveableObject);
     }
 }
